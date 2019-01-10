@@ -2,10 +2,16 @@ from wiktionaryparser import WiktionaryParser
 
 parser = WiktionaryParser()
 
+cache = {}
+
 def get_ipa(word):
-	word = parser.fetch(word, "English")
-	pron = word[0]["pronunciations"]["text"]
+	if word in cache:
+		return cache[word]
+
+	wikiword = parser.fetch(word, "English")
+	pron = wikiword[0]["pronunciations"]["text"]
 	pron = pron[0].split("/")[1]
+	cache[word] = pron
 	return pron
 
 def is_const(letter):
@@ -28,8 +34,6 @@ def last_syllable_end(word):
 	while len(word) and is_vowel(word[-1]):
 		end = word[-1] + end
 		word = word[:-1]
-
-	print(word, end)
 
 	return end			
 
